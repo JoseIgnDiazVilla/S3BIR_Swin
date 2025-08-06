@@ -21,7 +21,11 @@ python -m experiments.LN_prompt --exp_name=exp_clip_flickr --n_prompts=3 --LN_lr
 ### Evaluation
 
 ```bash
-python SBIR.py --model ./saved_models/exp_clip_flickr/last.ckpt --output_file exp_clip_flickr --image_file ./dir/flickr15k/dataset.txt --sketch_file ./dir/flickr15k/query_class.txt --encoder clip
+python SBIR.py --model ./saved_models/exp_clip_flickr/last.ckpt --output_file exp_clip_flickr --image_file ./dir/flickr15k/dataset.txt --sketch_file ./dir/flickr15k/query_class.txt --encoder clip --exp_name=exp_clip_flickr
+
+python generate_images.py --model ./saved_models/exp_clip_flickr/last.ckpt --output_file exp_clip_flickr --image_file ./dir/flickr15k/dataset.txt --sketch_file ./dir/flickr15k/query_class.txt --encoder clip --exp_name=exp_clip_flickr
+
+python3 mAP.py
 ```
 
 Then, you can calculate the mAP using the provided `mAP.py`.
