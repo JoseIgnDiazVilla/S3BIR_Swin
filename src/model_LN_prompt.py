@@ -4,8 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchmetrics.functional import retrieval_average_precision
 import pytorch_lightning as pl
-
-from src.clip import clip
 from experiments.options import opts
 
 from src.encoders.clip_encoder import ClipEncoder
@@ -28,7 +26,7 @@ class Model(pl.LightningModule):
         self.opts = opts
 
         if self.opts.encoder == 'clip':
-            self.encoder = ClipEncoder()
+            self.encoder = ClipEncoder(device=self.device)
         elif self.opts.encoder == 'dinov2':
             self.encoder = DinoV2Encoder()
         else:
@@ -139,9 +137,9 @@ class Model(pl.LightningModule):
 
     def forward(self, data, dtype='image'):
         if dtype == 'image':
-            feat = self.encoder(data, prompt=self.img_prompt)
+            feat = self.encoder(data, prompt=self.img_prompt.expand(data.shape[0], -1, -1))
         else:
-            feat = self.encoder(data, prompt=self.sk_prompt)
+            feat = self.encoder(data, prompt=self.sk_prompt.expand(data.shape[0], -1, -1))
         return feat
 
     def training_step(self, batch, batch_idx):

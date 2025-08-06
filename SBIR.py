@@ -36,8 +36,7 @@ if __name__ == '__main__':
     # Cargar el modelo
     try:
         model = Model().to(device)
-        print(os.path.join(path_models, opts.model))
-        model_checkpoint = torch.load(os.path.join(path_models, opts.model)) 
+        model_checkpoint = torch.load(opts.model) 
         model.load_state_dict(model_checkpoint['state_dict'])
         model.eval()                                                
     except:
