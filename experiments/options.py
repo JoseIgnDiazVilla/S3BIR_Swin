@@ -32,7 +32,7 @@ parser.add_argument('--workers', type=int, default=12)
 parser.add_argument('--model_type', type=str, default='one_encoder', choices=['one_encoder', 'two_encoder'])
 parser.add_argument('--epochs', type=int, default=50, help='Number of training epochs')
 parser.add_argument('--gpu_id', type=int, default=0, help='GPU ID to use for training')
-parser.add_argument('--encoder', type=str, default='clip', choices=['clip', 'dinov2'])
+parser.add_argument('--encoder', type=str, default='clip', choices=['clip', 'dinov2', 'dinov3'])
 
 # ----------------------
 # ViT Prompt Parameters
