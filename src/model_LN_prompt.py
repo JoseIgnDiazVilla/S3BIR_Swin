@@ -21,27 +21,20 @@ def freeze_all_but_bn(m):
             m.bias.requires_grad_(False)
 
 def is_norm_module(m: nn.Module) -> bool:
-    # Detecta cualquier módulo cuyo nombre de clase contenga "Norm"
-    # (LayerNorm, RMSNorm, FusedRMSNorm, etc.)
     return "norm" in m.__class__.__name__.lower() or isinstance(m, nn.LayerNorm)
 
 def freeze_all_but_norms_and_storage(model: nn.Module):
-    # 1) congela todo
     for p in model.parameters():
         p.requires_grad = False
 
-    # 2) descongela TODAS las capas de normalización
     for m in model.modules():
         if is_norm_module(m):
             for p in m.parameters(recurse=False):
                 p.requires_grad = True
 
-    # 3) descongela storage tokens si existen
     if getattr(model, "n_storage_tokens", 0) and model.n_storage_tokens > 0:
         if hasattr(model, "storage_tokens") and isinstance(model.storage_tokens, nn.Parameter):
-            model.storage_tokens.requires_grad = True
-        else:
-            raise AttributeError("El modelo no expone `storage_tokens` como nn.Parameter.")
+            model.storage_tokens.requires_grad = True # La idea es entrenar solo los `registros`
 
 class Model(pl.LightningModule):
     def __init__(self):
@@ -61,7 +54,6 @@ class Model(pl.LightningModule):
         else:
             raise ValueError(f"Unknown model_type {self.opts.encoder}")
         
-
         # Prompt Engineering
         self.sk_prompt = nn.Parameter(torch.randn(self.opts.n_prompts, self.opts.prompt_dim))
         self.img_prompt = nn.Parameter(torch.randn(self.opts.n_prompts, self.opts.prompt_dim))
