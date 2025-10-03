@@ -9,6 +9,7 @@ from experiments.options import opts
 from src.encoders.clip_encoder import ClipEncoder
 from src.encoders.dinov2_encoder import DinoV2Encoder
 from src.encoders.dinov3_encoder import DinoV3Encoder
+from src.encoders.swin_encoder import SwinEncoder
 
 def freeze_model(m):
     m.requires_grad_(False)
@@ -51,6 +52,9 @@ class Model(pl.LightningModule):
         elif self.opts.encoder == 'dinov3':
             self.encoder = DinoV3Encoder()
             self.encoder.apply(freeze_all_but_norms_and_storage)
+        elif self.opts.encoder == 'swin':
+            self.encoder = SwinEncoder(model_name='Swin-T', device=self.device)
+            self.encoder.apply(freeze_all_but_bn)
         else:
             raise ValueError(f"Unknown model_type {self.opts.encoder}")
         
